@@ -19,28 +19,19 @@ package org.jboss.weld.tck;
 import javax.enterprise.context.spi.Context;
 
 import org.jboss.jsr299.tck.spi.Contexts;
-import org.jboss.testharness.AbstractTest;
 import org.jboss.weld.Container;
 import org.jboss.weld.context.ApplicationContext;
 import org.jboss.weld.context.DependentContext;
 import org.jboss.weld.context.ManagedContext;
 import org.jboss.weld.context.RequestContext;
 import org.jboss.weld.context.http.HttpRequestContext;
-import org.jboss.weld.context.unbound.UnboundLiteral;
 
 public class ContextsImpl implements Contexts<Context>
 {
 
    public RequestContext getRequestContext()
    {
-      if (AbstractTest.isInContainer())
-      {
          return Container.instance().deploymentManager().instance().select(HttpRequestContext.class).get();
-      }
-      else
-      {
-         return Container.instance().deploymentManager().instance().select(RequestContext.class, UnboundLiteral.INSTANCE).get();
-      }
    }
 
    public void setActive(Context context)

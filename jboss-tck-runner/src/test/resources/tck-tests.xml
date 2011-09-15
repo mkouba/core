@@ -2,13 +2,13 @@
 
 <!-- JSR-299 TCK TestNG configuration for Weld -->
 
-<suite name="Weld / JBoss AS run of CDI TCK" verbose="0"  >
+<suite name="Weld / JBoss AS run of CDI TCK" verbose="0"  configfailurepolicy="continue">
    <test name="CDI TCK">
-      <method-selectors>
+      <!-- method-selectors>
          <method-selector>
-            <selector-class name="org.jboss.testharness.impl.testng.DisableIntegrationTestsMethodSelector" />
+            <selector-class name="" />
          </method-selector>
-      </method-selectors>
+      </method-selectors-->
       <packages>
          <package name="org.jboss.jsr299.tck.tests.*" />
          <package name="org.jboss.jsr299.tck.interceptors.tests.*" />
@@ -26,8 +26,16 @@
                <exclude name="testDestroyedInstanceMustNotBeReturnedByGet"/>
             </methods>
          </class>
+         
          <!-- Issues in Weld (the RI) -->
-
+          <!-- WELD-966 -->
+         <class name="org.jboss.jsr299.tck.tests.lookup.byname.ResolutionByNameTest">
+            <methods>
+               <exclude name="testAmbiguousELNamesResolved" />
+               <exclude name="testFieldNameUsedAsBeanName" />
+            </methods>
+         </class>
+		
          <!-- Issues in JBoss AS -->
          
          

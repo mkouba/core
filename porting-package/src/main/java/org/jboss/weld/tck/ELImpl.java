@@ -18,13 +18,12 @@ package org.jboss.weld.tck;
 
 import javax.el.ELContext;
 
+import org.jboss.jsr299.tck.api.ConfigurationDependent;
 import org.jboss.jsr299.tck.api.JSR299Configuration;
-import org.jboss.testharness.api.Configurable;
-import org.jboss.testharness.api.Configuration;
 import org.jboss.weld.manager.BeanManagerImpl;
 import org.jboss.weld.test.el.EL;
 
-public class ELImpl implements org.jboss.jsr299.tck.spi.EL, Configurable
+public class ELImpl implements org.jboss.jsr299.tck.spi.EL, ConfigurationDependent
 {
    
    private JSR299Configuration configuration;
@@ -56,15 +55,10 @@ public class ELImpl implements org.jboss.jsr299.tck.spi.EL, Configurable
       }
    }
 
-   public void setConfiguration(Configuration configuration)
+   public void setConfiguration(JSR299Configuration configuration)
    {
-      if (configuration instanceof JSR299Configuration)
       {
-         this.configuration = (JSR299Configuration) configuration; 
-      }
-      else
-      {
-         throw new IllegalArgumentException("Can only use ELImpl in the CDI TCK");
+         this.configuration = configuration; 
       }
    }
    
