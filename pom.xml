@@ -26,7 +26,7 @@
     <properties>
         <!-- Dependency versions. KEEP IN ALPHABETICAL ORDER-->
         <apache.httpclient.version>3.1</apache.httpclient.version>
-        <arquillian.version>1.0.0.CR4</arquillian.version>
+        <arquillian.version>1.0.0.CR5</arquillian.version>
         <arquillian.jboss.version>1.0.0.CR4</arquillian.jboss.version>
         <arquillian.weld.version>1.0.0.CR2</arquillian.weld.version>
         <arquillian.tomcat.version>1.0.0.CR1</arquillian.tomcat.version>
@@ -37,7 +37,7 @@
         <cal10n.version>0.7.2</cal10n.version>
         <cargo.maven2.plugin.version>1.0</cargo.maven2.plugin.version>
         <cdi.api.version>1.0-SP4</cdi.api.version>
-        <cdi.tck.version>1.0.4.SP3</cdi.tck.version>
+        <cdi.tck.version>1.1.0-SNAPSHOT</cdi.tck.version>
         <checkstyle.plugin.version>2.5</checkstyle.plugin.version>
         <contiperf.version>1.06</contiperf.version>
         <findbugs-maven-plugin.version>2.3.2</findbugs-maven-plugin.version>
