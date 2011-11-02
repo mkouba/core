@@ -39,6 +39,7 @@
     <dependencies>
 
         <dependency>
+
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-api-bom</artifactId>
             <version>${weld.api.version}</version>
