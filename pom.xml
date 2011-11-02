@@ -66,7 +66,7 @@
         <log4j.version>1.2.14</log4j.version>
         <selenium.maven.plugin.version>1.0.1</selenium.maven.plugin.version>
         <slf4j.version>1.5.10</slf4j.version>
-        <testng.version>5.10</testng.version>
+        <testng.version>6.2</testng.version>
         <weld.api.version>1.1.Final</weld.api.version>
     </properties>
 
@@ -461,7 +461,6 @@
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
-                <classifier>jdk15</classifier>
                 <exclusions>
                     <exclusion>
                         <groupId>junit</groupId>
