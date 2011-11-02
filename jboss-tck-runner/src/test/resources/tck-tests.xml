@@ -35,6 +35,12 @@
                <exclude name="testFieldNameUsedAsBeanName" />
             </methods>
          </class>
+         <!-- WELD-458-->
+         <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.interceptorForLifecycleTargetMethod.InterceptorForLifecycleTargetMethodTest">
+            <methods>
+               <exclude name="testInterceptorForLifecycleTargetMethod" />
+            </methods>
+         </class>
 		
          <!-- Issues in JBoss AS -->
          

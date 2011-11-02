@@ -21,8 +21,8 @@
    <url>http://www.seamframework.org/Weld</url>
 
 	<properties>
-		<jbossas7.version>7.0.1.Final</jbossas7.version>
-		<arquillian.version>1.0.0.CR4</arquillian.version>
+		<jbossas7.version>7.0.2.Final</jbossas7.version>
+		<arquillian.version>1.0.0.CR5</arquillian.version>
 	</properties>
 
    <dependencies>
@@ -163,6 +163,7 @@
                <suiteXmlFiles>
                   <suiteXmlFile>src/test/resources/tck-tests.xml</suiteXmlFile>
                </suiteXmlFiles>
+               <groups>alternatives</groups>
                <argLine>-Xmx256m</argLine>
                <forkMode>once</forkMode>
             </configuration>
@@ -212,7 +213,7 @@
 			<id>jboss-as7</id>
 
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<activeByDefault>false</activeByDefault>
 			</activation>
 
 			<dependencies>
@@ -224,7 +225,7 @@
 				<dependency>
 				  <groupId>org.jboss.arquillian.protocol</groupId>
 				  <artifactId>arquillian-protocol-servlet</artifactId>
-				  <version>1.0.0.CR4</version>
+				  <version>1.0.0.CR5</version>
 				</dependency>				
 				<dependency>
 					<groupId>org.jboss.jsr299.tck</groupId>

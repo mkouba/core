@@ -12,8 +12,8 @@
 	<container qualifier="jboss7" default="true">
 		<configuration>
 			<property name="javaHome">/opt/java/jdk1.6.0_26/</property>
-			<property name="jbossHome">/opt/jboss/jboss-as-web-7.0.1.Final/</property>
-			<!-- property name="jbossHome">/opt/jboss/jboss-as-7.0.1.Final/</property-->
+			<property name="jbossHome">/opt/jboss/jboss-as-web-7.0.2.Final/</property>
+			<!-- property name="jbossHome">/opt/jboss/jboss-as-7.0.2.Final/</property-->
 			<property name="javaVmArguments">-enableassertions -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n</property>
 			<!--property name="javaVmArguments">-enableassertions</property-->
 			<!-- property name="serverConfig">standalone-preview.xml</property-->
@@ -25,7 +25,7 @@
 	</container>
 	
 	<!-- container qualifier="jboss7" default="true"> <configuration> <property 
-		name="jbossHome">/opt/jboss/jboss-as-web-7.0.1.Final</property> <property 
+		name="jbossHome">/opt/jboss/jboss-as-web-7.0.2.Final</property> <property 
 		name="javaHome">/opt/java/jdk1.6.0_26</property> </configuration> <protocol 
 		type="jmx-as7"> <property name="executionType">REMOTE</property> </protocol> 
 	</container-->
