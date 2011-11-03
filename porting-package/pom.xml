@@ -19,7 +19,6 @@
    </licenses>
    <url>http://www.seamframework.org/Weld</url>
 
-
    <dependencies>
 
       <dependency>

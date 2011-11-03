@@ -21,45 +21,38 @@ import javax.el.ELContext;
 import org.jboss.jsr299.tck.api.ConfigurationDependent;
 import org.jboss.jsr299.tck.api.JSR299Configuration;
 import org.jboss.weld.manager.BeanManagerImpl;
-import org.jboss.weld.test.el.EL;
+import org.jboss.weld.test.util.el.EL;
 
-public class ELImpl implements org.jboss.jsr299.tck.spi.EL, ConfigurationDependent
-{
-   
-   private JSR299Configuration configuration;
-   
-   
-   @SuppressWarnings("unchecked")
-   public <T> T evaluateValueExpression(String expression, Class<T> expectedType)
-   {
-      ELContext elContext = createELContext();
-      return (T) EL.EXPRESSION_FACTORY.createValueExpression(elContext, expression, expectedType).getValue(elContext);
-   }
- 
-   @SuppressWarnings("unchecked")
-   public <T> T evaluateMethodExpression(String expression, Class<T> expectedType, Class<?>[] expectedParamTypes, Object[] expectedParams)
-   {
-      ELContext elContext = createELContext();
-      return (T) EL.EXPRESSION_FACTORY.createMethodExpression(elContext, expression, expectedType, expectedParamTypes).invoke(elContext, expectedParams);
-   }
-   
-   public ELContext createELContext()
-   {
-      if (configuration.getManagers().getManager() instanceof BeanManagerImpl)
-      {
-         return EL.createELContext((BeanManagerImpl) configuration.getManagers().getManager());
-      }
-      else
-      {
-         throw new IllegalStateException("Wrong manager");
-      }
-   }
+public class ELImpl implements org.jboss.jsr299.tck.spi.EL, ConfigurationDependent {
 
-   public void setConfiguration(JSR299Configuration configuration)
-   {
-      {
-         this.configuration = configuration; 
-      }
-   }
-   
+    private JSR299Configuration configuration;
+
+    @SuppressWarnings("unchecked")
+    public <T> T evaluateValueExpression(String expression, Class<T> expectedType) {
+        ELContext elContext = createELContext();
+        return (T) EL.EXPRESSION_FACTORY.createValueExpression(elContext, expression, expectedType).getValue(elContext);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T evaluateMethodExpression(String expression, Class<T> expectedType, Class<?>[] expectedParamTypes,
+            Object[] expectedParams) {
+        ELContext elContext = createELContext();
+        return (T) EL.EXPRESSION_FACTORY.createMethodExpression(elContext, expression, expectedType, expectedParamTypes)
+                .invoke(elContext, expectedParams);
+    }
+
+    public ELContext createELContext() {
+        if (configuration.getManagers().getManager() instanceof BeanManagerImpl) {
+            return EL.createELContext((BeanManagerImpl) configuration.getManagers().getManager());
+        } else {
+            throw new IllegalStateException("Wrong manager");
+        }
+    }
+
+    public void setConfiguration(JSR299Configuration configuration) {
+        {
+            this.configuration = configuration;
+        }
+    }
+
 }

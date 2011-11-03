@@ -214,20 +214,12 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-managed</artifactId>
-<<<<<<< HEAD
 					<version>${jboss.as7.version}</version>
-=======
-					<version>${jbossas7.version}</version>
->>>>>>> 8b4a18684f6fd3bc557549c6746396a0f756746e
 				</dependency>
 				<dependency>
 				  <groupId>org.jboss.arquillian.protocol</groupId>
 				  <artifactId>arquillian-protocol-servlet</artifactId>
-<<<<<<< HEAD
 				  <version>${arquillian.version}</version>
-=======
-				  <version>1.0.0.CR5</version>
->>>>>>> 8b4a18684f6fd3bc557549c6746396a0f756746e
 				</dependency>				
 				<dependency>
 					<groupId>org.jboss.jsr299.tck</groupId>

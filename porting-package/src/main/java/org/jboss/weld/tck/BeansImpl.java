@@ -16,13 +16,13 @@
  */
 package org.jboss.weld.tck;
 
-import org.jboss.jsr299.tck.spi.Beans;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import org.jboss.jsr299.tck.spi.Beans;
 
 /**
  * Implements the Beans SPI for the TCK specifically for the JBoss RI.
