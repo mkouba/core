@@ -8,8 +8,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jboss.weld</groupId>
-    <artifactId>weld-porting-package</artifactId>
-    <name>Weld Porting Package for the CDI TCK</name>
+    <artifactId>weld-porting-package-tck10</artifactId>
+    <name>Weld Porting Package for the CDI TCK 1.0</name>
 
     <licenses>
         <license>
@@ -36,6 +36,7 @@
         <dependency>
             <groupId>org.jboss.jsr299.tck</groupId>
             <artifactId>jsr299-tck-api</artifactId>
+         	<version>${cdi.tck-1-0.version}</version>
         </dependency>
 
         <dependency>

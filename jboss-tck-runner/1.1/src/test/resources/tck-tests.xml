@@ -1,0 +1,74 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<!-- JSR-299 TCK TestNG configuration for Weld -->
+<suite name="Weld / JBoss AS run of CDI TCK" verbose="0"  configfailurepolicy="continue">
+   <test name="CDI TCK">
+      <!-- method-selectors>
+         <method-selector>
+            <selector-class name="" />
+         </method-selector>
+      </method-selectors-->
+      <packages>
+         <package name="org.jboss.jsr299.tck.tests.*" />
+         <package name="org.jboss.jsr299.tck.interceptors.tests.*" />
+      </packages>
+      <classes>
+      
+         <!-- Issues in the TCK -->
+         <class name="org.jboss.jsr299.tck.tests.context.DestroyForSameCreationalContext2Test" >
+            <methods>
+               <exclude name="testDestroyForSameCreationalContextOnly"/>
+            </methods>
+         </class>
+         <class name="org.jboss.jsr299.tck.tests.context.DestroyedInstanceReturnedByGetTest" >
+            <methods>
+               <exclude name="testDestroyedInstanceMustNotBeReturnedByGet"/>
+            </methods>
+         </class>
+         
+         <!-- Issues in Weld (the RI) -->
+          <!-- WELD-966 -->
+         <class name="org.jboss.jsr299.tck.tests.lookup.byname.ResolutionByNameTest">
+            <methods>
+               <exclude name="testAmbiguousELNamesResolved" />
+               <exclude name="testFieldNameUsedAsBeanName" />
+            </methods>
+         </class>
+         <!-- WELD-458-->
+         <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.interceptorForLifecycleTargetMethod.InterceptorForLifecycleTargetMethodTest">
+            <methods>
+               <exclude name="testInterceptorForLifecycleTargetMethod" />
+            </methods>
+         </class>
+		
+         <!-- Issues in JBoss AS -->
+         
+         
+         <!-- Requires EJB 3.1 -->
+         <!-- TODO Check these -->
+         
+         <!-- JBAS-8306 -->
+         <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest">
+            <methods>
+               <exclude name="testRequestScopeActiveDuringCallToEjbTimeoutMethod" />
+               <exclude name="testRequestScopeDestroyedAfterCallToEjbTimeoutMethod" />
+            </methods>
+         </class>
+         
+         <!-- Remove exclusion when AS7 suports SFSB serialization properly-->
+            <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.lifecycle.EnterpriseBeanLifecycleTest">
+                <methods>
+                    <exclude name="testSerializeSFSB"/>
+                </methods>
+            </class>
+            <!-- Remove exclusion when AS7 suports WS endpoint injection-->
+            <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
+                <methods>
+                    <exclude name="testInjectionIntoWebServiceEndpoint"/>
+                </methods>
+            </class>
+
+      </classes>
+   </test>
+   
+</suite>
