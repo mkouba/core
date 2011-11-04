@@ -230,6 +230,7 @@
 								<arquillian.launch>jboss7</arquillian.launch>
 								<!-- -DforkMode=never http://stackoverflow.com/questions/824019/maven-2-1-0-not-passing-on-system-properties-to-java-virtual-machine -->
 								<org.jboss.jsr299.tck.libraryDirectory>target/dependency/lib</org.jboss.jsr299.tck.libraryDirectory>
+								<org.jboss.jsr299.tck.testDataSource>java:jboss/datasources/ExampleDS</org.jboss.jsr299.tck.testDataSource>
 							</systemPropertyVariables>
 						</configuration>
 					</plugin>
