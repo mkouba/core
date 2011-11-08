@@ -17,41 +17,32 @@
 package org.jboss.weld.tck;
 
 import javax.el.ELContext;
+import javax.enterprise.inject.spi.BeanManager;
 
-import org.jboss.jsr299.tck.api.ConfigurationDependent;
-import org.jboss.jsr299.tck.api.JSR299Configuration;
 import org.jboss.weld.manager.BeanManagerImpl;
 import org.jboss.weld.test.util.el.EL;
 
-public class ELImpl implements org.jboss.jsr299.tck.spi.EL, ConfigurationDependent {
-
-    private JSR299Configuration configuration;
+public class ELImpl implements org.jboss.jsr299.tck.spi.EL{
 
     @SuppressWarnings("unchecked")
-    public <T> T evaluateValueExpression(String expression, Class<T> expectedType) {
-        ELContext elContext = createELContext();
+    public <T> T evaluateValueExpression(BeanManager beanManager, String expression, Class<T> expectedType) {
+        ELContext elContext = createELContext(beanManager);
         return (T) EL.EXPRESSION_FACTORY.createValueExpression(elContext, expression, expectedType).getValue(elContext);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T evaluateMethodExpression(String expression, Class<T> expectedType, Class<?>[] expectedParamTypes,
+    public <T> T evaluateMethodExpression(BeanManager beanManager, String expression, Class<T> expectedType, Class<?>[] expectedParamTypes,
             Object[] expectedParams) {
-        ELContext elContext = createELContext();
+        ELContext elContext = createELContext(beanManager);
         return (T) EL.EXPRESSION_FACTORY.createMethodExpression(elContext, expression, expectedType, expectedParamTypes)
                 .invoke(elContext, expectedParams);
     }
 
-    public ELContext createELContext() {
-        if (configuration.getManagers().getManager() instanceof BeanManagerImpl) {
-            return EL.createELContext((BeanManagerImpl) configuration.getManagers().getManager());
+    public ELContext createELContext(BeanManager beanManager) {
+        if (beanManager instanceof BeanManagerImpl) {
+            return EL.createELContext((BeanManagerImpl) beanManager);
         } else {
             throw new IllegalStateException("Wrong manager");
-        }
-    }
-
-    public void setConfiguration(JSR299Configuration configuration) {
-        {
-            this.configuration = configuration;
         }
     }
 

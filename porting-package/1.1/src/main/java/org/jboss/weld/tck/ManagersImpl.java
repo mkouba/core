@@ -16,15 +16,8 @@
  */
 package org.jboss.weld.tck;
 
-import javax.enterprise.inject.spi.BeanManager;
-
 import org.jboss.jsr299.tck.spi.Managers;
-import org.jboss.weld.test.BeanManagerLocator;
 
 public class ManagersImpl implements Managers {
-
-    public BeanManager getManager() {
-        return BeanManagerLocator.INSTANCE.locate();
-    }
 
 }
