@@ -2,12 +2,18 @@
 
 <!-- JSR-299 TCK TestNG configuration for Weld -->
 <suite name="Weld / JBoss AS run of CDI TCK" verbose="0" configfailurepolicy="continue">
+    
+    <listeners>
+        <listener class-name="org.jboss.weld.tck.SingleTestMethodInterceptor"/>
+    </listeners>
+    
     <test name="CDI TCK">
-        <!-- method-selectors> <method-selector> <selector-class name="" /> </method-selector> </method-selectors -->
+
         <packages>
             <package name="org.jboss.jsr299.tck.tests.*" />
             <package name="org.jboss.jsr299.tck.interceptors.tests.*" />
         </packages>
+        
         <classes>
 
             <!-- Issues in the TCK -->
@@ -113,12 +119,7 @@
             </class>
             <class name="org.jboss.jsr299.tck.tests.implementation.enterprise.newBean.NewEnterpriseBeanTest">
                 <methods>
-                    <exclude name="testForEachEnterpriseBeanANewBeanExists" />
-                    <exclude name="testNewBeanHasNoBeanELName" />
-                    <exclude name="testNewBeanHasNoObservers" />
-                    <exclude name="testNewBeanHasNoStereotypes" />
-                    <exclude name="testNewBeanIsDependentScoped" />
-                    <exclude name="testNewBeanIsHasOnlyNewBinding" />
+                    <exclude name=".*" />
                 </methods>
             </class>
             <class name="org.jboss.jsr299.tck.tests.context.passivating.broken.enterpriseBeanWithNonPassivatingDecorator.EnterpriseBeanWithNonPassivatingDecoratorTest">
@@ -153,14 +154,39 @@
                     <exclude name="test" />
                 </methods>
             </class>
-
+            <!-- JAVASERVERFACES_SPEC_PUBLIC-763 -->
+            <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.jsr299.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.jsr299.tck.tests.context.conversation.InvalidatingSessionDestroysConversationTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.jsr299.tck.tests.context.conversation.ManualCidPropagationTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <!-- ARQ handling multiple EARs -->
+            <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
 
             <!-- Issues in Weld (the RI) -->
             <!-- WELD-966 -->
             <class name="org.jboss.jsr299.tck.tests.lookup.byname.ResolutionByNameTest">
                 <methods>
-                    <exclude name="testAmbiguousELNamesResolved" />
-                    <exclude name="testFieldNameUsedAsBeanName" />
+                    <exclude name=".*" />
                 </methods>
             </class>
             <!-- WELD-458 -->
@@ -169,12 +195,26 @@
                     <exclude name="testInterceptorForLifecycleTargetMethod" />
                 </methods>
             </class>
+            <!-- WELD-986 -->
+            <class name="org.jboss.jsr299.tck.tests.interceptors.definition.broken.observer.InterceptorWithObserverMethodTest">
+                <methods>
+                    <exclude name="testInterceptorWithObserverMethodNotOk" />
+                </methods>
+            </class>
+            <!-- WELD-998 -->
+            <class name="org.jboss.jsr299.tck.tests.definition.bean.custom.CustomBeanImplementationTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <!-- WELD-991 --> 
+            <class name="org.jboss.jsr299.tck.tests.lookup.manager.ManagerTest">
+                <methods>
+                    <exclude name="testGetReferenceWithIllegalBeanType" />
+                </methods>
+            </class>
 
             <!-- Issues in JBoss AS -->
-
-
-            <!-- Requires EJB 3.1 -->
-            <!-- TODO Check these -->
 
             <!-- JBAS-8306 -->
             <class name="org.jboss.jsr299.tck.tests.context.request.ejb.EJBRequestContextTest">
@@ -190,10 +230,37 @@
                     <exclude name="testSerializeSFSB" />
                 </methods>
             </class>
+            
+            <!-- AS7-1903 --> 
             <!-- Remove exclusion when AS7 suports WS endpoint injection -->
             <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ws.InjectionIntoWebServiceEndPointTest">
                 <methods>
                     <exclude name="testInjectionIntoWebServiceEndpoint" />
+                    <exclude name="testResourceBeanTypes"/>
+                </methods>
+            </class>
+            
+            <!-- AS7-2125 -->
+            <class name="org.jboss.jsr299.tck.tests.event.observer.transactional.TransactionalObserverTest">
+                 <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            
+            <!-- Unknown deployment issues -->
+            <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.EnterpriseBeanNotDiscoveredAsManagedBeanTest">
+                 <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ContainerEventTest">
+                 <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest">
+                 <methods>
+                    <exclude name=".*" />
                 </methods>
             </class>
 
