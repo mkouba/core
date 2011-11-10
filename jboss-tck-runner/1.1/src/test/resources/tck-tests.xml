@@ -154,6 +154,12 @@
                     <exclude name="test" />
                 </methods>
             </class>
+            <!-- CDI-88/CDITCK-174 -->
+            <class name="org.jboss.jsr299.tck.tests.extensions.afterBeanDiscovery.AfterBeanDiscoveryTest">
+                <methods>
+                    <exclude name="testProcessObserverMethodFiredWhileAddingObserverMethod" />
+                </methods>
+            </class>
             <!-- JAVASERVERFACES_SPEC_PUBLIC-763 -->
             <class name="org.jboss.jsr299.tck.tests.context.conversation.ClientConversationContextTest">
                 <methods>
@@ -242,23 +248,6 @@
             
             <!-- AS7-2125 -->
             <class name="org.jboss.jsr299.tck.tests.event.observer.transactional.TransactionalObserverTest">
-                 <methods>
-                    <exclude name=".*" />
-                </methods>
-            </class>
-            
-            <!-- Unknown deployment issues -->
-            <class name="org.jboss.jsr299.tck.tests.implementation.simple.definition.EnterpriseBeanNotDiscoveredAsManagedBeanTest">
-                 <methods>
-                    <exclude name=".*" />
-                </methods>
-            </class>
-            <class name="org.jboss.jsr299.tck.tests.lookup.injection.non.contextual.ContainerEventTest">
-                 <methods>
-                    <exclude name=".*" />
-                </methods>
-            </class>
-            <class name="org.jboss.jsr299.tck.tests.lookup.injectionpoint.broken.not.bean.InjectionPointTest">
                  <methods>
                     <exclude name=".*" />
                 </methods>

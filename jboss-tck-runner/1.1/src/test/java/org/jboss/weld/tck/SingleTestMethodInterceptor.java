@@ -21,12 +21,14 @@
  */
 package org.jboss.weld.tck;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import org.testng.IMethodInstance;
 import org.testng.IMethodInterceptor;
 import org.testng.ITestContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * If test class property is set all test methods that don't belong to specified test class are excluded.
@@ -42,6 +44,14 @@ public class SingleTestMethodInterceptor implements IMethodInterceptor {
     public List<IMethodInstance> intercept(List<IMethodInstance> methods, ITestContext context) {
         String test = System.getProperty(TEST_CLASS_PROPERTY);
         if (test == null || test.isEmpty()) {
+        	
+        	// Group test methods by class 
+            Collections.sort(methods, new Comparator<IMethodInstance>() {
+            	public int compare(IMethodInstance o1, IMethodInstance o2) {
+                    int result= o1.getMethod().getTestClass().getName()
+                      .compareTo(o2.getMethod().getTestClass().getName());
+                    return result;
+			}});
             return methods;
         }
         List<IMethodInstance> ret = new ArrayList<IMethodInstance>();
@@ -60,4 +70,5 @@ public class SingleTestMethodInterceptor implements IMethodInterceptor {
         }
         return ret;
     }
+    
 }
