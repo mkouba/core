@@ -219,6 +219,12 @@
                     <exclude name="testGetReferenceWithIllegalBeanType" />
                 </methods>
             </class>
+            <!-- WELD-430 -->
+            <class name="org.jboss.jsr299.tck.tests.decorators.invocation.DecoratorInvocationTest">
+                <methods>
+                    <exclude name="testDecoratorInvokesDelegateMethodOutsideOfBusinessMethodInterception" />
+                </methods>
+            </class>
 
             <!-- Issues in JBoss AS -->
 
