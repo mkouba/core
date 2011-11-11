@@ -178,7 +178,7 @@
         <profile>
             <id>weld-embedded</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
@@ -194,6 +194,14 @@
                 </dependency>
             </dependencies>
             <build>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/test/weld-embedded</directory>
+                    </resource>
+                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -243,6 +251,14 @@
                 </dependency>
             </dependencies>
             <build>
+                <resources>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/test/jbossas7</directory>
+                    </resource>
+                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
