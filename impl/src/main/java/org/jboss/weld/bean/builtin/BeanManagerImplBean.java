@@ -20,47 +20,37 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.weld.manager.BeanManagerImpl;
-import org.jboss.weld.manager.ForwardingBeanManager;
 import org.jboss.weld.util.collections.Arrays2;
 
-public class BeanManagerBean extends AbstractBuiltInBean<ForwardingBeanManager> {
+public class BeanManagerImplBean extends AbstractBuiltInBean<BeanManagerImpl> {
 
-    private static final Set<Type> TYPES = Arrays2.<Type>asSet(Object.class, BeanManager.class);
+    private static final Set<Type> TYPES = Arrays2.<Type>asSet(Object.class, BeanManagerImpl.class);
 
-    public BeanManagerBean(BeanManagerImpl manager) {
-        super(BeanManager.class.getSimpleName(), manager, ForwardingBeanManager.class);
+    public BeanManagerImplBean(BeanManagerImpl manager) {
+        super(BeanManagerImpl.class.getSimpleName(), manager, BeanManagerImpl.class);
     }
 
-    public ForwardingBeanManager create(CreationalContext<ForwardingBeanManager> creationalContext) {
-        return new ForwardingBeanManager() {
-
-            private static final long serialVersionUID = -3758842865161095597L;
-
-            @Override
-            public BeanManagerImpl delegate() {
-                return getBeanManager().getCurrent();
-            }
-        };
+    public BeanManagerImpl create(CreationalContext<BeanManagerImpl> creationalContext) {
+        return getBeanManager().getCurrent();
     }
 
     @Override
-    public Class<ForwardingBeanManager> getType() {
-        return ForwardingBeanManager.class;
+    public Class<BeanManagerImpl> getType() {
+        return BeanManagerImpl.class;
     }
 
     public Set<Type> getTypes() {
         return TYPES;
     }
 
-    public void destroy(ForwardingBeanManager instance, CreationalContext<ForwardingBeanManager> creationalContext) {
+    public void destroy(BeanManagerImpl instance, CreationalContext<BeanManagerImpl> creationalContext) {
         // No-op
     }
 
     @Override
     public String toString() {
-        return "Built-in Bean [javax.enterprise.inject.spi.BeanManager] with qualifiers [@Default]";
+        return "Built-in Bean [org.jboss.weld.manager.BeanManagerImpl] with qualifiers [@Default]";
     }
 }

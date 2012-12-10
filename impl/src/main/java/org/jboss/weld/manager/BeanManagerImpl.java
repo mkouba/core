@@ -166,9 +166,12 @@ import org.jboss.weld.resources.MemberTransformer;
 import org.jboss.weld.serialization.spi.ContextualStore;
 import org.jboss.weld.util.Beans;
 import org.jboss.weld.util.Bindings;
+import org.jboss.weld.util.ImmutableValueHolder;
 import org.jboss.weld.util.Interceptors;
+import org.jboss.weld.util.LazyValueHolder;
 import org.jboss.weld.util.Preconditions;
 import org.jboss.weld.util.Proxies;
+import org.jboss.weld.util.ValueHolder;
 import org.jboss.weld.util.collections.IterableToIteratorFunction;
 import org.jboss.weld.util.reflection.Reflections;
 import org.slf4j.cal10n.LocLogger;
@@ -294,6 +297,11 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     private final transient ContainerLifecycleEvents containerLifecycleEvents;
 
     /**
+     * Note that lazy value holder is required for the root bean manager
+     */
+    private final transient ValueHolder<Container> containerValueHolder;
+
+    /**
      * Create a new, root, manager
      *
      * @param serviceRegistry
@@ -316,7 +324,14 @@ public class BeanManagerImpl implements WeldManager, Serializable {
                 new CopyOnWriteArraySet<CurrentActivity>(),
                 ModuleEnablement.EMPTY_ENABLEMENT,
                 id,
-                new AtomicInteger());
+                new AtomicInteger(),
+                new LazyValueHolder<Container>() {
+
+                    @Override
+                    protected Container computeValue() {
+                        return Container.instance();
+                    }
+                });
     }
 
     public static BeanManagerImpl newManager(BeanManagerImpl rootManager, String id, ServiceRegistry services) {
@@ -334,7 +349,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
                 new CopyOnWriteArraySet<CurrentActivity>(),
                 ModuleEnablement.EMPTY_ENABLEMENT,
                 id,
-                new AtomicInteger());
+                new AtomicInteger(),
+                new ImmutableValueHolder<Container>(Container.instance()));
     }
 
     /**
@@ -368,7 +384,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
                 parentManager.getCurrentActivities(),
                 parentManager.getEnabled(),
                 new StringBuilder().append(parentManager.getChildIds().incrementAndGet()).toString(),
-                parentManager.getChildIds());
+                parentManager.getChildIds(),
+                new ImmutableValueHolder<Container>(Container.instance()));
     }
 
     private BeanManagerImpl(
@@ -385,7 +402,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
             Set<CurrentActivity> currentActivities,
             ModuleEnablement enabled,
             String id,
-            AtomicInteger childIds) {
+            AtomicInteger childIds,
+            ValueHolder<Container> containerValueHolder) {
         this.services = serviceRegistry;
         this.beans = beans;
         this.transitiveBeans = transitiveBeans;
@@ -420,6 +438,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
         this.globalStrictObserverNotifier = globalObserverNotifierService.getGlobalStrictObserverNotifier();
         globalObserverNotifierService.registerBeanManager(this);
         this.containerLifecycleEvents = serviceRegistry.get(ContainerLifecycleEvents.class);
+
+        this.containerValueHolder = containerValueHolder;
     }
 
 
@@ -477,7 +497,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
                 enterpriseBeans.put(enterpriseBean.getEjbDescriptor(), enterpriseBean);
             }
             if (bean instanceof PassivationCapable) {
-                Container.instance().services().get(ContextualStore.class).putIfAbsent(bean);
+                containerValueHolder.get().services().get(ContextualStore.class).putIfAbsent(bean);
             }
             registerBeanNamespace(bean);
             // New beans (except for SessionBeans) and most built in beans aren't resolvable transtively
@@ -714,6 +734,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
 
     @Override
     public Object getReference(Bean<?> bean, Type requestedType, CreationalContext<?> creationalContext) {
+
         if (bean == null) {
             throw new IllegalArgumentException(NULL_BEAN_ARGUMENT);
         }
@@ -728,7 +749,6 @@ public class BeanManagerImpl implements WeldManager, Serializable {
         }
         return getReference(bean, requestedType, creationalContext, false);
     }
-
 
     /**
      * Get a reference, registering the injection point used.
@@ -779,6 +799,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
 
     @Override
     public Object getInjectableReference(InjectionPoint injectionPoint, CreationalContext<?> creationalContext) {
+
         if (injectionPoint.isDelegate()) {
             return DecorationHelper.peek().getNextDelegate(injectionPoint, creationalContext);
         } else {
@@ -835,6 +856,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
      */
     @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType type, Annotation... interceptorBindings) {
+
         if (interceptorBindings.length == 0) {
             throw new IllegalArgumentException(INTERCEPTOR_BINDINGS_EMPTY);
         }
@@ -946,7 +968,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     public BeanManagerImpl createActivity() {
         BeanManagerImpl childActivity = newChildActivityManager(this);
         childActivities.add(childActivity);
-        Container.instance().addActivity(childActivity);
+        containerValueHolder.get().addActivity(childActivity);
         return childActivity;
     }
 
@@ -1255,6 +1277,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
 
     @Override
     public <X> Bean<? extends X> resolve(Set<Bean<? extends X>> beans) {
+
         if (beans == null || beans.isEmpty()) {
             return null;
         }
@@ -1495,4 +1518,9 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     public <T> Iterable<AnnotatedType<T>> getAnnotatedTypes(Class<T> type) {
         return cast(getSlimAnnotatedTypes(type));
     }
+
+    Container getContainer() {
+        return containerValueHolder.get();
+    }
 }
+
