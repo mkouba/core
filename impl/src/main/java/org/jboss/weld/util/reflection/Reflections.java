@@ -34,7 +34,9 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -334,6 +336,18 @@ public class Reflections {
             }
         }
         return null;
+    }
+
+    public static Set<Class<?>> getRawTypes(Set<Type> types) {
+        if(types == null || types.isEmpty()) {
+            return Collections.emptySet();
+        }
+        Set<Class<?>> rawTypes = new HashSet<Class<?>>(types.size());
+
+        for (Type type : types) {
+            rawTypes.add(getRawType(type));
+        }
+        return rawTypes;
     }
 
     @SuppressWarnings("unchecked")

@@ -714,7 +714,9 @@ public class BeanManagerImpl implements WeldManager, Serializable {
         Preconditions.checkArgumentNotNull(bean, "bean");
         Preconditions.checkArgumentNotNull(requestedType, "requestedType");
         Preconditions.checkArgumentNotNull(creationalContext, "creationalContext");
-        if (!BeanTypeAssignabilityRules.instance().matches(requestedType, bean.getTypes())) {
+        // This check is not quite as per the spec but it should be safe since the requestedType only affects client proxy
+        // lookup (not bean resolution)
+        if (!BeanTypeAssignabilityRules.instance().matches(Reflections.getRawType(requestedType), Reflections.getRawTypes(bean.getTypes()))) {
             throw new IllegalArgumentException(SPECIFIED_TYPE_NOT_BEAN_TYPE, requestedType, bean);
         }
         return getReference(bean, requestedType, creationalContext, false);
