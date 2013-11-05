@@ -104,4 +104,15 @@ public interface ServletLogger extends WeldLogger {
     @Message(id = 711, value = "Context activation pattern {0} ignored as it is overriden by the integrator.", format = Format.MESSAGE_FORMAT)
     void webXmlMappingPatternIgnored(String pattern);
 
+    // TODO change log level
+    @LogMessage(level = Level.WARN)
+    @Message(id = 712, value = "Invalid HTTP session found: {0}", format = Format.MESSAGE_FORMAT)
+    void invalidSessionFound(String sessionId);
+
+ // TODO change log level
+    @LogMessage(level = Level.WARN)
+    @Message(id = 713, value = "Created a new HTTP session: {0}", format = Format.MESSAGE_FORMAT)
+    void newSessionCreated(String sessionId);
+
+
 }

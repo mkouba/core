@@ -20,16 +20,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionListener;
 
+import org.jboss.weld.logging.ServletLogger;
+
 /**
  * Holds the session associated with the current request.
  *
- * This utility class was added to work around an incompatibility problem with some Servlet containers (JBoss Web, Tomcat). In
- * these containers, {@link HttpServletRequest#getSession(boolean)} cannot be used within
- * {@link HttpSessionListener#sessionCreated(HttpSession)} method invocation is the created session is not made available.
- * As a result either null is returned or a new session is created (possibly causing an endless loop).
+ * This utility class was added to work around an incompatibility problem with some Servlet containers (JBoss Web, Tomcat). In these containers,
+ * {@link HttpServletRequest#getSession(boolean)} cannot be used within {@link HttpSessionListener#sessionCreated(HttpSession)} method invocation is the created
+ * session is not made available. As a result either null is returned or a new session is created (possibly causing an endless loop).
  *
- * This utility class receives an {@link HttpSession} once it is created and holds it until the request is destroyed / session
- * is invalidated.
+ * This utility class receives an {@link HttpSession} once it is created and holds it until the request is destroyed / session is invalidated.
  *
  * @see https://issues.jboss.org/browse/AS7-6428
  *
@@ -52,19 +52,74 @@ public class SessionHolder {
     }
 
     public static HttpSession getSessionIfExists() {
-        return CURRENT_SESSION.get();
+        HttpSession session = CURRENT_SESSION.get();
+        if (session != null && isSessionValid(session)) {
+            return session;
+        }
+        return null;
     }
 
-    public static HttpSession getSession(HttpServletRequest request, boolean create) {
+    public static CurrentSession getSession(HttpServletRequest request, boolean create) {
+        CurrentSession currentSession = new CurrentSession();
         HttpSession session = CURRENT_SESSION.get();
-        if (create && session == null) {
-            request.getSession(true);
-            session = CURRENT_SESSION.get();
+
+        if (session != null) {
+            if (isSessionValid(session)) {
+                // Valid session
+                currentSession.set(session);
+            } else {
+                // Invalid session found - most probably invalidated in parallel request
+                ServletLogger.LOG.invalidSessionFound(session.getId());
+                currentSession.setInvalidSessionFound();
+                CURRENT_SESSION.set(null);
+            }
         }
-        return session;
+
+        if (create && currentSession.get() == null) {
+            ServletLogger.LOG.newSessionCreated(request.getSession(true).getId());
+            currentSession.set(CURRENT_SESSION.get());
+        }
+        return currentSession;
     }
 
     public static void clear() {
         CURRENT_SESSION.remove();
     }
+
+    public static class CurrentSession {
+
+        private HttpSession value = null;
+
+        private boolean invalidSessionFound = false;
+
+        CurrentSession() {
+        }
+
+        public HttpSession get() {
+            return value;
+        }
+
+        void set(HttpSession value) {
+            this.value = value;
+        }
+
+        public boolean isInvalidSessionFound() {
+            return invalidSessionFound;
+        }
+
+        void setInvalidSessionFound() {
+            this.invalidSessionFound = true;
+        }
+
+    }
+
+    private static boolean isSessionValid(HttpSession session) {
+        try {
+            session.getLastAccessedTime();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
 }

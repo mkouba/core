@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.jboss.weld.context.beanstore.NamingScheme;
 import org.jboss.weld.logging.ContextLogger;
 import org.jboss.weld.servlet.SessionHolder;
+import org.jboss.weld.servlet.SessionHolder.CurrentSession;
 
 /**
  * <p>
@@ -65,7 +66,13 @@ public class LazySessionBeanStore extends AbstractSessionBeanStore {
     @Override
     protected HttpSession getSession(boolean create) {
         try {
-            return SessionHolder.getSession(request, create);
+            CurrentSession currentSession = SessionHolder.getSession(request, create);
+            if(currentSession.isInvalidSessionFound()) {
+                // Reattach the bean store
+                detach();
+                attach();
+            }
+            return currentSession.get();
         } catch (IllegalStateException e) {
             // If container can't create an underlying session, invalidate the
             // current one
