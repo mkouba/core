@@ -244,7 +244,7 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     /*
     * set that is only used to make sure that no duplicate beans are added
     */
-    private final transient Set<Bean<?>> beanSet = Collections.synchronizedSet(new HashSet<Bean<?>>());
+    private transient Set<Bean<?>> beanSet = Collections.synchronizedSet(new HashSet<Bean<?>>());
 
     /*
      * Data structure representing all managers *accessible* from this bean
@@ -932,6 +932,18 @@ public class BeanManagerImpl implements WeldManager, Serializable {
      */
     public ObserverNotifier getGlobalStrictObserverNotifier() {
         return globalStrictObserverNotifier;
+    }
+
+    /**
+     * Clear the bean set that is only used to make sure that no duplicate beans are added.
+     *
+     * For internal use only.
+     */
+    public void clearBeanSetAfterBoot() {
+        if(beanSet != null) {
+            beanSet.clear();
+            beanSet = null;
+        }
     }
 
     /**

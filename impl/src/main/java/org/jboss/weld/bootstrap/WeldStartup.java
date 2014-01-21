@@ -422,6 +422,7 @@ public class WeldStartup {
         deploymentManager.getGlobalLenientObserverNotifier().clear();
         deploymentManager.getDecoratorResolver().clear();
         deploymentManager.getServices().cleanupAfterBoot();
+        deploymentManager.clearBeanSetAfterBoot();
         for (BeanDeployment beanDeployment : getBeanDeployments()) {
             BeanManagerImpl beanManager = beanDeployment.getBeanManager();
             beanManager.getBeanResolver().clear();
@@ -429,6 +430,7 @@ public class WeldStartup {
             beanManager.getDecoratorResolver().clear();
             beanManager.getInterceptorMetadataReader().cleanAfterBoot();
             beanManager.getServices().cleanupAfterBoot();
+            beanManager.clearBeanSetAfterBoot();
             // clean up beans
             for (Bean<?> bean : beanManager.getBeans()) {
                 if (bean instanceof RIBean<?>) {
