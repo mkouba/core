@@ -71,5 +71,7 @@ public class DefaultMetadataCachingReader implements MetadataCachingReader {
 
     public void cleanAfterBoot() {
         classMetadataInterceptorMetadataCache.invalidateAll();
+        reflectiveClassMetadataCache.invalidateAll();
+        interceptorMetadataCache.invalidateAll();
     }
 }
