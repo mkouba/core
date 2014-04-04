@@ -16,7 +16,7 @@
  */
 package org.jboss.weld.bean.builtin;
 
-import static org.jboss.weld.ContainerState.INITIALIZED;
+import static org.jboss.weld.ContainerState.BEAN_DISCOVERY_FINISHED;
 import static org.jboss.weld.ContainerState.SHUTDOWN;
 import static org.jboss.weld.ContainerState.VALIDATED;
 
@@ -88,49 +88,49 @@ public class BeanManagerProxy extends ForwardingBeanManager {
 
     @Override
     public Set<Bean<?>> getBeans(Type beanType, Annotation... qualifiers) {
-        checkContainerValidated(GET_BEANS_METHOD_NAME);
+        checkBeanDiscoveryFinished(GET_BEANS_METHOD_NAME);
         return super.getBeans(beanType, qualifiers);
     }
 
     @Override
     public Set<Bean<?>> getBeans(String name) {
-        checkContainerValidated(GET_BEANS_METHOD_NAME);
+        checkBeanDiscoveryFinished(GET_BEANS_METHOD_NAME);
         return super.getBeans(name);
     }
 
     @Override
     public Bean<?> getPassivationCapableBean(String id) {
-        checkContainerValidated("getPassivationCapableBean()");
+        checkBeanDiscoveryFinished("getPassivationCapableBean()");
         return super.getPassivationCapableBean(id);
     }
 
     @Override
     public <X> Bean<? extends X> resolve(Set<Bean<? extends X>> beans) {
-        checkContainerValidated("resolve()");
+        checkBeanDiscoveryFinished("resolve()");
         return super.resolve(beans);
     }
 
     @Override
     public void validate(InjectionPoint injectionPoint) {
-        checkContainerValidated("validate()");
+        checkBeanDiscoveryFinished("validate()");
         super.validate(injectionPoint);
     }
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(T event, Annotation... qualifiers) {
-        checkContainerValidated("resolveObserverMethods()");
+        checkBeanDiscoveryFinished("resolveObserverMethods()");
         return super.resolveObserverMethods(event, qualifiers);
     }
 
     @Override
     public List<Decorator<?>> resolveDecorators(Set<Type> types, Annotation... qualifiers) {
-        checkContainerValidated("resolveDecorators()");
+        checkBeanDiscoveryFinished("resolveDecorators()");
         return super.resolveDecorators(types, qualifiers);
     }
 
     @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType type, Annotation... interceptorBindings) {
-        checkContainerValidated("resolveInterceptors()");
+        checkBeanDiscoveryFinished("resolveInterceptors()");
         return super.resolveInterceptors(type, interceptorBindings);
     }
 
@@ -155,8 +155,30 @@ public class BeanManagerProxy extends ForwardingBeanManager {
         ContainerState state = container.getState();
         if (SHUTDOWN.equals(state)) {
             throw BeanManagerLogger.LOG.methodNotAvailableAfterShutdown(methodName);
-        } else if (!(INITIALIZED.equals(state) || VALIDATED.equals(state))) {
+        } else if (VALIDATED.comesBefore(state)) {
+            // TODO change log message
             throw BeanManagerLogger.LOG.methodNotAvailableDuringInitialization(methodName);
+        }
+    }
+
+    /**
+     * When in portable mode (default) this method verifies that the bean discovery has been finished. If it hasn't been, an
+     * {@link IllegalStateException} is thrown. When in non-portable mode this method is no-op.
+     *
+     * @param methodName
+     */
+    private void checkBeanDiscoveryFinished(String methodName) {
+        if (nonPortableMode) {
+            return;
+        }
+        if (this.container == null) {
+            this.container = Container.instance(manager);
+        }
+        ContainerState state = container.getState();
+        if (SHUTDOWN.equals(state)) {
+            throw BeanManagerLogger.LOG.methodNotAvailableAfterShutdown(methodName);
+        } else if (BEAN_DISCOVERY_FINISHED.comesBefore(state)) {
+            // FIXME throw BeanManagerLogger.LOG.methodNotAvailableDuringInitialization(methodName);
         }
     }
 

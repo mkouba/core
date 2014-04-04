@@ -388,7 +388,9 @@ public class WeldStartup {
             beanDeployment.deployBeans(environment);
         }
 
+        getContainer().setState(ContainerState.BEAN_DISCOVERY_FINISHED);
         AfterBeanDiscoveryImpl.fire(deploymentManager, deployment, bdaMapping, contexts);
+        // TODO process all queued addBean() and addObserverMethod() methods
 
         // Re-read the deployment structure, bdaMapping will be the physical
         // structure, extensions, classes, and any beans added using addBean

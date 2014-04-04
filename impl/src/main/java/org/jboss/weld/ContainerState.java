@@ -17,19 +17,26 @@
 package org.jboss.weld;
 
 /**
- * Application container instance state
+ * Application container instance state.
+ *
+ * Do not change the ordering of constants without reimplementing {@link #comesBefore(ContainerState)} and {@link #comesAfter(ContainerState)}.
  *
  * @author pmuir
  */
 public enum ContainerState {
     /**
      * The container has not been started
+     * TODO rename to BEFORE_USE
      */
     STOPPED(false),
     /**
      * The container is starting
      */
     STARTING(false),
+    /**
+     * The bean discovery has finished
+     */
+    BEAN_DISCOVERY_FINISHED(false),
     /**
      * The container has started and beans have been deployed
      */
@@ -54,11 +61,25 @@ public enum ContainerState {
     final boolean available;
 
     /**
-     * Whether the container is available for use
-     *
-     * @return
+     * @return ture if the container is available for use, false otherwise
      */
     public boolean isAvailable() {
         return available;
+    }
+
+    /**
+     * @param state
+     * @return true if the given state comes before this state, false otherwise
+     */
+    public boolean comesAfter(ContainerState state) {
+        return this.ordinal() > state.ordinal();
+    }
+
+    /**
+     * @param state
+     * @return true if the given state comes after this state, false otherwise
+     */
+    public boolean comesBefore(ContainerState state) {
+        return this.ordinal() < state.ordinal();
     }
 }
