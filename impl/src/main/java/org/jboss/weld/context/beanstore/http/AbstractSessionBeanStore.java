@@ -110,6 +110,9 @@ public abstract class AbstractSessionBeanStore extends AttributeBeanStore {
                     CURRENT_LOCK_STORE.remove();
                 }
             }
+            if(session == null) {
+                throw ContextLogger.LOG.unableToGetLockStoreForSessionBeanStore(this);
+            }
             lockStore = (LockStore) session.getAttribute(SESSION_KEY);
             if (lockStore == null) {
                 //we don't really have anything we can lock on

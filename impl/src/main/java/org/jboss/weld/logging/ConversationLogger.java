@@ -26,6 +26,8 @@ import org.jboss.logging.annotations.Message.Format;
 import org.jboss.logging.annotations.MessageLogger;
 import org.jboss.weld.context.BusyConversationException;
 import org.jboss.weld.context.NonexistentConversationException;
+import org.jboss.weld.exceptions.IllegalArgumentException;
+import org.jboss.weld.exceptions.IllegalStateException;
 
 /**
  * Log messages for conversations.

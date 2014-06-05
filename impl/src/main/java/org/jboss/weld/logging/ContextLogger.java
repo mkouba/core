@@ -26,6 +26,7 @@ import org.jboss.logging.annotations.Message.Format;
 import org.jboss.logging.annotations.MessageLogger;
 import org.jboss.weld.exceptions.DefinitionException;
 import org.jboss.weld.exceptions.IllegalArgumentException;
+import org.jboss.weld.exceptions.IllegalStateException;
 
 /**
  * Log messages for Contexts
@@ -156,5 +157,8 @@ public interface ContextLogger extends WeldLogger {
     @LogMessage(level = Level.WARN)
     @Message(id = 224, value = "Unable to clear bean store {0}.", format = Format.MESSAGE_FORMAT)
     void unableToClearBeanStore(Object beanStore);
+
+    @Message(id = 225, value = "Unable to get lock store for session bean store {0} - no HttpSession available.", format = Format.MESSAGE_FORMAT)
+    IllegalStateException unableToGetLockStoreForSessionBeanStore(Object beanStore);
 
 }
