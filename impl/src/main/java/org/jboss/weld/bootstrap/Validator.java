@@ -880,7 +880,9 @@ public class Validator implements Service {
                 return true;
             }
         } else {
-            return resolvedBeans.size() > 0;
+            // TODO isEmpty() should be more performant
+            // return resolvedBeans.size() > 0;
+            return !resolvedBeans.isEmpty();
         }
     }
 
