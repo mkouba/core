@@ -125,7 +125,9 @@ public class Beans {
         if (bean == null) {
             return false;
         } else {
-            return manager.getServices().get(MetaAnnotationStore.class).getScopeModel(bean.getScope()).isPassivating();
+            // TODO use cached scope models during bootstrap
+            return manager.isPassivatingScope(bean.getScope());
+            // return manager.getServices().get(MetaAnnotationStore.class).getScopeModel(bean.getScope()).isPassivating();
         }
     }
 

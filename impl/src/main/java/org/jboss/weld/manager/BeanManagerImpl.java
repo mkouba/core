@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -251,6 +252,9 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     * set that is only used to make sure that no duplicate beans are added
     */
     private transient Set<Bean<?>> beanSet = Collections.synchronizedSet(new HashSet<Bean<?>>());
+
+    // TODO Cache sope models to avoid "getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType)" lookups, access must be synchronized
+    private transient Map<Class<? extends Annotation>, ScopeModel<?>> scopeCache = new HashMap<Class<? extends Annotation>, ScopeModel<?>>();
 
     /*
      * Data structure representing all managers *accessible* from this bean
@@ -1179,19 +1183,36 @@ public class BeanManagerImpl implements WeldManager, Serializable {
 
     @Override
     public boolean isNormalScope(Class<? extends Annotation> annotationType) {
-        ScopeModel<?> scope = getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType);
+        ScopeModel<?> scope = getScopeModel(annotationType);
         return scope.isValid() && scope.isNormal();
     }
 
     @Override
     public boolean isPassivatingScope(Class<? extends Annotation> annotationType) {
-        ScopeModel<?> scope = getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType);
+        ScopeModel<?> scope = getScopeModel(annotationType);
         return scope.isValid() && scope.isPassivating();
     }
 
     @Override
     public boolean isScope(Class<? extends Annotation> annotationType) {
-        return getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType).isValid();
+        return getScopeModel(annotationType).isValid();
+    }
+
+    private ScopeModel<?> getScopeModel(Class<? extends Annotation> annotationType) {
+     // TODO cache scope model during bootstrap
+        ScopeModel<?> scopeModel;
+        if(scopeCache != null) {
+            synchronized(scopeCache) {
+                scopeModel = scopeCache.get(annotationType);
+                if(scopeModel == null) {
+                    scopeModel = getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType);
+                    scopeCache.put(annotationType, scopeModel);
+                }
+            }
+        } else {
+            scopeModel = getServices().get(MetaAnnotationStore.class).getScopeModel(annotationType);
+        }
+        return scopeModel;
     }
 
     @Override
@@ -1282,6 +1303,10 @@ public class BeanManagerImpl implements WeldManager, Serializable {
         if (beanSet != null) {
             beanSet.clear();
             beanSet = null;
+        }
+        if(scopeCache != null) {
+            scopeCache.clear();
+            scopeCache = null;
         }
     }
 
