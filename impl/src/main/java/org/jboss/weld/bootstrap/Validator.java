@@ -368,7 +368,8 @@ public class Validator implements Service {
             return; // do not validate delegate injection points as these are special
         }
         Set<?> resolvedBeans = beanManager.getBeanResolver().resolve(beanManager.getBeans(ij));
-        if (!isInjectionPointSatisfied(ij, resolvedBeans, beanManager)) {
+        int resolvedBeansSize = resolvedBeans.size();
+        if (!isInjectionPointSatisfied(ij, resolvedBeansSize, beanManager)) {
             throw ValidatorLogger.LOG.injectionPointHasUnsatisfiedDependencies(
                 ij,
                 Formats.formatAnnotations(ij.getQualifiers()),
@@ -376,7 +377,7 @@ public class Validator implements Service {
                 Formats.formatAsStackTraceElement(ij),
                 getUnsatisfiedDependenciesAdditionalInfo(ij, beanManager));
         }
-        if (resolvedBeans.size() > 1) {
+        if (resolvedBeansSize > 1) {
             throw ValidatorLogger.LOG.injectionPointHasAmbiguousDependencies(
                 ij,
                 Formats.formatAnnotations(ij.getQualifiers()),
@@ -385,7 +386,7 @@ public class Validator implements Service {
                 WeldCollections.toMultiRowString(resolvedBeans));
         }
         // Account for the case this is disabled decorator
-        if (!resolvedBeans.isEmpty()) {
+        if (resolvedBeansSize > 0) {
             Bean<?> resolvedBean = (Bean<?>) resolvedBeans.iterator().next();
             if (beanManager.isNormalScope(resolvedBean.getScope())) {
                 UnproxyableResolutionException ue = Proxies.getUnproxyableTypeException(ij.getType(), resolvedBean, beanManager.getServices());
@@ -872,15 +873,15 @@ public class Validator implements Service {
         }
     }
 
-    private static boolean isInjectionPointSatisfied(InjectionPoint ij, Set<?> resolvedBeans, BeanManagerImpl beanManager) {
+    private static boolean isInjectionPointSatisfied(InjectionPoint ij, int resolvedBeansSize, BeanManagerImpl beanManager) {
         if (ij.getBean() instanceof Decorator<?>) {
             if (beanManager.getEnabled().isDecoratorEnabled(ij.getBean().getBeanClass())) {
-                return resolvedBeans.size() > 0;
+                return resolvedBeansSize > 0;
             } else {
                 return true;
             }
         } else {
-            return resolvedBeans.size() > 0;
+            return resolvedBeansSize > 0;
         }
     }
 
