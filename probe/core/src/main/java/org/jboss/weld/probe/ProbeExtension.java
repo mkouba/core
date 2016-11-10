@@ -264,7 +264,7 @@ public class ProbeExtension implements Extension {
         } else {
             type = annotated.getBaseType();
         }
-        UnproxyableResolutionException unproxyableException = Proxies.getUnproxyableTypeException(type, weldManager.getServices());
+        UnproxyableResolutionException unproxyableException = Proxies.getUnproxyableTypeException(type, weldManager.getServices(), false);
         if (unproxyableException != null) {
             // A bean with an interceptor must be a proxyable
             ProbeLogger.LOG.invocationMonitorNotAssociatedNonProxyableType(type);

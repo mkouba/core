@@ -235,7 +235,7 @@ public class ClientProxyProvider {
              */
             proxy = requestedTypeClosureProxyPool.getCastValue(new RequestedTypeHolder(requestedType, bean));
             if (proxy == BEAN_NOT_PROXYABLE_MARKER) {
-                throw Proxies.getUnproxyableTypeException(requestedType, services());
+                throw Proxies.getUnproxyableTypeException(requestedType, services(), false);
             }
         }
         BeanLogger.LOG.lookedUpClientProxy(proxy.getClass(), bean);

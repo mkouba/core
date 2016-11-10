@@ -41,6 +41,7 @@ import org.jboss.weld.bean.builtin.EventMetadataBean;
 import org.jboss.weld.bean.builtin.InjectionPointBean;
 import org.jboss.weld.bean.builtin.InstanceBean;
 import org.jboss.weld.bean.builtin.InterceptedBeanMetadataBean;
+import org.jboss.weld.bean.builtin.InterceptionFactoryBean;
 import org.jboss.weld.bean.builtin.InterceptorMetadataBean;
 import org.jboss.weld.bean.builtin.ee.PrincipalBean;
 import org.jboss.weld.bootstrap.api.Environment;
@@ -235,6 +236,9 @@ public class BeanDeployment {
         beanDeployer.addBuiltInBean(new DecoratedBeanMetadataBean(beanManager));
         beanDeployer.addBuiltInBean(new InterceptorMetadataBean(beanManager));
         beanDeployer.addBuiltInBean(new DecoratorMetadataBean(beanManager));
+        // TODO
+        beanDeployer.addBuiltInBean(new InterceptionFactoryBean(beanManager));
+
         if (beanManager.getServices().getRequired(SecurityServices.class) != NoopSecurityServices.INSTANCE) {
             beanDeployer.addBuiltInBean(new PrincipalBean(beanManager));
         }
