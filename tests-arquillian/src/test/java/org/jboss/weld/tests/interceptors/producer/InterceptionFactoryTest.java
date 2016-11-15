@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2016, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -45,8 +45,18 @@ public class InterceptionFactoryTest {
     }
 
     @Test
-    public void testFooPing(@Produced Foo produced) {
-        assertEquals("Hello pong", produced.ping());
+    public void testFooPing(@Produced Foo foo) {
+        assertEquals("Hello pong", foo.ping());
+    }
+
+    @Test
+    public void testFooClassLevelBinding(@Produced("classLevel") Foo foo) {
+        assertEquals("Hello pong", foo.ping());
+    }
+
+    @Test
+    public void testFooEjbInterceptors(@Produced("ejbInterceptors") Foo foo) {
+        assertEquals("Hello pong", foo.ping());
     }
 
     @Test

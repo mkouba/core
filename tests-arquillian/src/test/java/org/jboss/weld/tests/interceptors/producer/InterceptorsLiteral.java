@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jboss.weld.tests.interceptors.producer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import javax.enterprise.util.AnnotationLiteral;
-import javax.interceptor.InterceptorBinding;
+import javax.interceptor.Interceptors;
 
-@InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Hello {
+@SuppressWarnings("serial")
+public class InterceptorsLiteral extends AnnotationLiteral<Interceptors> implements Interceptors {
 
-    @SuppressWarnings("all")
-    public static class Literal extends AnnotationLiteral<Hello> implements Hello {
+    private final Class<?>[] value;
 
-        private Literal() {
-        }
-
-        public static final Literal INSTANCE = new Literal();
+    InterceptorsLiteral(Class<?>... value) {
+        this.value = value;
     }
+
+    @Override
+    public Class<?>[] value() {
+        return value;
+    }
+
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2016, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -39,6 +39,24 @@ public class Producer {
         interceptionFactory.configure()
                 .filterMethods((m) -> m.getJavaMember().getName().equals("ping") && m.getJavaMember().getParameterCount() == 0)
                 .findFirst().get().add(Hello.Literal.INSTANCE);
+        return interceptionFactory.createInterceptedInstance(new Foo());
+    }
+
+    @Produced("classLevel")
+    @ApplicationScoped
+    @Produces
+    public Foo produceFooWithClassLevelBinding(InterceptionFactory<Foo> interceptionFactory) {
+        interceptionFactory.configure().add(Hello.Literal.INSTANCE);
+        return interceptionFactory.createInterceptedInstance(new Foo());
+    }
+
+    @Produced("ejbInterceptors")
+    @ApplicationScoped
+    @Produces
+    public Foo produceFooWithEjbInterceptors(InterceptionFactory<Foo> interceptionFactory) {
+        interceptionFactory.configure()
+                .filterMethods((m) -> m.getJavaMember().getName().equals("ping") && m.getJavaMember().getParameterCount() == 0)
+                .findFirst().get().add(new InterceptorsLiteral(HelloInterceptor.class));
         return interceptionFactory.createInterceptedInstance(new Foo());
     }
 

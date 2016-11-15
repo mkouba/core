@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2010, Red Hat, Inc., and individual contributors
+ * Copyright 2016, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -33,12 +33,22 @@ import javax.inject.Qualifier;
 @Retention(RUNTIME)
 public @interface Produced {
 
+    String value() default "";
+
     @SuppressWarnings("all")
     public static class Literal extends AnnotationLiteral<Produced> implements Produced {
 
-        private Literal() {
+        public static final Literal INSTANCE = new Literal("");
+
+        private final String value;
+
+        private Literal(String id) {
+            this.value = id;
         }
 
-        public static final Literal INSTANCE = new Literal();
+        @Override
+        public String value() {
+            return value;
+        }
     }
 }

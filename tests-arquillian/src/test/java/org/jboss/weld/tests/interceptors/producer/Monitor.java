@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2016, Red Hat, Inc., and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
  * full listing of individual contributors.
  *
@@ -27,7 +27,7 @@ import javax.interceptor.InterceptorBinding;
 
 @InterceptorBinding
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Monitor {
 
     @SuppressWarnings("all")
