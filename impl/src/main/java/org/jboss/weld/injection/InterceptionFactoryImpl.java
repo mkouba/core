@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedMethod;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.InterceptionFactory;
 import javax.enterprise.inject.spi.builder.AnnotatedTypeConfigurator;
 
@@ -41,9 +42,8 @@ import org.jboss.weld.util.Proxies;
  */
 public class InterceptionFactoryImpl<T> implements InterceptionFactory<T> {
 
-    public static <F> InterceptionFactoryImpl<F> of(BeanManagerImpl beanManager, CreationalContext<?> creationalContext,
-            AnnotatedTypeConfiguratorImpl<F> configurator) {
-        return new InterceptionFactoryImpl<>(beanManager, creationalContext, configurator);
+    public static <F> InterceptionFactoryImpl<F> of(BeanManagerImpl beanManager, CreationalContext<?> creationalContext, AnnotatedType<F> annotatedType) {
+        return new InterceptionFactoryImpl<>(beanManager, creationalContext, annotatedType);
     }
 
     private static final AtomicLong INDEX = new AtomicLong();
@@ -52,14 +52,16 @@ public class InterceptionFactoryImpl<T> implements InterceptionFactory<T> {
 
     private final CreationalContext<?> creationalContext;
 
-    private final AnnotatedTypeConfiguratorImpl<T> configurator;
+    private final AnnotatedType<T> annotatedType;
+
+    private AnnotatedTypeConfiguratorImpl<T> configurator;
 
     private boolean isUnproxyableValidationEnabled;
 
-    private InterceptionFactoryImpl(BeanManagerImpl beanManager, CreationalContext<?> creationalContext, AnnotatedTypeConfiguratorImpl<T> configurator) {
+    private InterceptionFactoryImpl(BeanManagerImpl beanManager, CreationalContext<?> creationalContext, AnnotatedType<T> annotatedType) {
         this.beanManager = beanManager;
         this.creationalContext = creationalContext;
-        this.configurator = configurator;
+        this.annotatedType = annotatedType;
         this.isUnproxyableValidationEnabled = true;
     }
 
@@ -72,6 +74,9 @@ public class InterceptionFactoryImpl<T> implements InterceptionFactory<T> {
 
     @Override
     public AnnotatedTypeConfigurator<T> configure() {
+        if (configurator == null) {
+            configurator = new AnnotatedTypeConfiguratorImpl<>(annotatedType);
+        }
         return configurator;
     }
 
@@ -79,8 +84,8 @@ public class InterceptionFactoryImpl<T> implements InterceptionFactory<T> {
     public T createInterceptedInstance(T instance) {
 
         if (isUnproxyableValidationEnabled) {
-            UnproxyableResolutionException exception = Proxies.getUnproxyableTypeException(configurator.getAnnotated().getBaseType(), null,
-                    beanManager.getServices(), !isUnproxyableValidationEnabled);
+            UnproxyableResolutionException exception = Proxies.getUnproxyableTypeException(annotatedType.getBaseType(), null, beanManager.getServices(),
+                    !isUnproxyableValidationEnabled);
             if (exception != null) {
                 throw exception;
             }
@@ -90,8 +95,8 @@ public class InterceptionFactoryImpl<T> implements InterceptionFactory<T> {
 
         long idx = INDEX.incrementAndGet();
         String id = instance.getClass().getName() + "$$" + idx;
-        UnbackedAnnotatedType<T> slimAnnotatedType = classTransformer.getUnbackedAnnotatedType(new AnnotatedTypeBuilderImpl<>(configurator).build(),
-                beanManager.getId(), id);
+        UnbackedAnnotatedType<T> slimAnnotatedType = classTransformer
+                .getUnbackedAnnotatedType(configurator != null ? new AnnotatedTypeBuilderImpl<>(configurator).build() : annotatedType, beanManager.getId(), id);
 
         EnhancedAnnotatedType<T> enhancedAnnotatedType = classTransformer.getEnhancedAnnotatedType(slimAnnotatedType);
 

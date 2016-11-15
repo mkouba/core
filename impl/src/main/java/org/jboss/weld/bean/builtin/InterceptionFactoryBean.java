@@ -10,7 +10,6 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InterceptionFactory;
 
-import org.jboss.weld.bootstrap.events.builder.AnnotatedTypeConfiguratorImpl;
 import org.jboss.weld.injection.InterceptionFactoryImpl;
 import org.jboss.weld.manager.BeanManagerImpl;
 import org.jboss.weld.util.collections.ImmutableSet;
@@ -35,7 +34,7 @@ public class InterceptionFactoryBean extends AbstractStaticallyDecorableBuiltInB
         AnnotatedParameter<?> annotatedParameter = (AnnotatedParameter<?>) ip.getAnnotated();
         ParameterizedType parameterizedType = (ParameterizedType) annotatedParameter.getBaseType();
         AnnotatedType<?> annotatedType = beanManager.createAnnotatedType(Reflections.getRawType(parameterizedType.getActualTypeArguments()[0]));
-        return InterceptionFactoryImpl.of(beanManager, creationalContext, new AnnotatedTypeConfiguratorImpl<>(annotatedType));
+        return InterceptionFactoryImpl.of(beanManager, creationalContext, annotatedType);
     }
 
     @Override
