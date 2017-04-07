@@ -474,11 +474,23 @@ public class WeldStartup {
     public void validateBeans() {
         BootstrapLogger.LOG.validatingBeans();
         tracker.start(Tracker.OP_VALIDATE_BEANS);
-        for (BeanDeployment beanDeployment : getBeanDeployments()) {
-            BeanManagerImpl beanManager = beanDeployment.getBeanManager();
-            beanManager.getBeanResolver().clear();
-            deployment.getServices().get(Validator.class).validateDeployment(beanManager, beanDeployment);
-            beanManager.getServices().get(InjectionTargetService.class).validate();
+        try {
+            for (BeanDeployment beanDeployment : getBeanDeployments()) {
+                BeanManagerImpl beanManager = beanDeployment.getBeanManager();
+                beanManager.getBeanResolver().clear();
+                deployment.getServices().get(Validator.class).validateDeployment(beanManager, beanDeployment);
+                beanManager.getServices().get(InjectionTargetService.class).validate();
+            }
+        } catch (Exception e) {
+            // TODO
+            for (BeanDeployment beanDeployment : getBeanDeployments()) {
+                try {
+                    beanDeployment.getBeanManager().validationFailed(e, environment);
+                } catch (Exception ignored) {
+                    ignored.printStackTrace();
+                }
+            }
+            throw e;
         }
         getContainer().setState(ContainerState.VALIDATED);
         tracker.start(Tracker.OP_ADV);

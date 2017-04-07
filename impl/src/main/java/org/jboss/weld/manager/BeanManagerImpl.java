@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.el.ELResolver;
@@ -94,6 +95,7 @@ import org.jboss.weld.bean.proxy.ClientProxyProvider;
 import org.jboss.weld.bean.proxy.DecorationHelper;
 import org.jboss.weld.bootstrap.SpecializationAndEnablementRegistry;
 import org.jboss.weld.bootstrap.Validator;
+import org.jboss.weld.bootstrap.api.Environment;
 import org.jboss.weld.bootstrap.api.ServiceRegistry;
 import org.jboss.weld.bootstrap.enablement.ModuleEnablement;
 import org.jboss.weld.bootstrap.events.ContainerLifecycleEvents;
@@ -290,6 +292,9 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     private final transient CurrentInjectionPoint currentInjectionPoint;
     private final transient boolean clientProxyOptimization;
 
+    // TODO
+    private final List<BiConsumer<Exception, Environment>> validationFailureCallbacks;
+
     /**
      * Create a new, root, manager
      *
@@ -391,6 +396,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
         this.registry = getServices().get(SpecializationAndEnablementRegistry.class);
         this.currentInjectionPoint = getServices().get(CurrentInjectionPoint.class);
         this.clientProxyOptimization = getServices().get(WeldConfiguration.class).getBooleanProperty(ConfigurationKey.INJECTABLE_REFERENCE_OPTIMIZATION);
+
+        this.validationFailureCallbacks = new CopyOnWriteArrayList<>();
     }
 
     private <T> Iterable<T> createDynamicGlobalIterable(final Function<BeanManagerImpl, Iterable<T>> transform) {
@@ -1220,6 +1227,8 @@ public class BeanManagerImpl implements WeldManager, Serializable {
             beanSet.clear();
             beanSet = null;
         }
+        // TODO
+        this.validationFailureCallbacks.clear();
     }
 
     public ConcurrentMap<SlimAnnotatedType<?>, InterceptionModel> getInterceptorModelRegistry() {
@@ -1541,6 +1550,17 @@ public class BeanManagerImpl implements WeldManager, Serializable {
     @Override
     public BeanManagerImpl unwrap() {
         return this;
+    }
+
+    // TODO
+    public void onValidationFailure(BiConsumer<Exception, Environment> callback) {
+        this.validationFailureCallbacks.add(callback);
+    }
+
+    public void validationFailed(Exception exception, Environment environment) {
+        for (BiConsumer<Exception, Environment> callback : validationFailureCallbacks) {
+            callback.accept(exception, environment);
+        }
     }
 
 }
